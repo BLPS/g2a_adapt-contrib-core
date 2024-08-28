@@ -36,6 +36,12 @@ class Router extends Backbone.Router {
   }
 
   get rootModel() {
+    if (this._navigationRoot === null && typeof window.SCO_CONTENT_ID !== 'undefined' && window.SCO_CONTENT_ID !== '') {
+      const scoModel = data.findById(window.SCO_CONTENT_ID);
+      if (scoModel) {
+        this.rootModel = scoModel;
+      }
+    }
     return this._navigationRoot || Adapt.course;
   }
 
@@ -581,7 +587,8 @@ class Router extends Backbone.Router {
     this.listenTo(Adapt.config, 'change:_activeLanguage', this.onLanguageChange);
   }
 
-  onLanguageChange() {
+  onLanguageChange() {    
+    if (!this.rootModel) { return; }
     this.updateLocation(null, null, null, null);
   }
 
